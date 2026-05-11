@@ -97,10 +97,30 @@ export async function printMagicCard(card: SlimCard) {
         lineCharacter: "=",
         breakLine: BreakLine.WORD,
     });
-    printer.alignLeft();
-    printer.print(card.name);
+
+
+
+    printer.alignCenter();
+    printer.println(card.name);
     printer.alignRight();
-    printer.print(card.mana_cost);
+    printer.println(card.mana_cost);
+
+    printer.alignCenter();
+    printer.drawLine();
+
+    printer.alignCenter();
+    printer.drawLine();
+
+
+    printer.println(card.type_line);
+
+    printer.alignLeft();
+    printer.println(card.oracle_text);
+
+    printer.newLine();
+    printer.alignRight();
+    printer.println(`${card.power}/${card.toughness}`);
+
     printer.cut();
     
     const buffer = printer.getBuffer();
