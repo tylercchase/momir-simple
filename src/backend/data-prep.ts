@@ -1,8 +1,8 @@
-import type { IScryfallCard } from "../../shared/cards/model";
-import type { SlimCard } from "../../shared/cards/slim-card.model";
+import type { SlimCard } from "@/shared/cards/slim-card.model";
+import type { IScryfallCard } from "@/shared/cards/model";
 
 console.log("Loading cards...");
-let file = Bun.file("./assets/default-cards.json");
+let file = Bun.file("./src/backend/assets/default-cards.json");
 const contents: IScryfallCard[] = await file.json();
 console.log("Done loading cards.");
 
@@ -21,7 +21,7 @@ for (const card of contents) {
     // @ts-ignore
     new_contents[card.cmc].push({
         name: card.name,
-        image_uri: card?.image_uris?.png ?? "",
+        image_uri: card?.image_uris?.art_crop ?? "",
         scryfall_uri: card?.scryfall_uri,
         mana_cost: card.mana_cost,
         power: card.power,
@@ -31,5 +31,5 @@ for (const card of contents) {
     });
 }
 
-let new_file = Bun.file("./assets/formatted-cards.json");
+let new_file = Bun.file("./src/backend/assets/formatted-cards.json");
 Bun.write(new_file, JSON.stringify(new_contents));
