@@ -6,8 +6,15 @@ export function App() {
         const res = await fetch(`/api/creature/${cmc}`);
 
         const data = await res.json();
+
+
         console.log(data);
         // theoretically there can be an empty card
+        
+        fetch("/api/print", {
+            method: "POST",
+            body: JSON.stringify(data),
+        });
     }
     return (
         <div className="app">

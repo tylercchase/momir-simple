@@ -9,8 +9,10 @@
         "start": "NODE_ENV=production bun src/index.tsx"
     },
     "dependencies": {
+        "node-thermal-printer": "^4.6.0",
         "react": "^19",
-        "react-dom": "^19"
+        "react-dom": "^19",
+        "usb": "^2.17.0"
     },
     "devDependencies": {
         "@types/react": "^19",

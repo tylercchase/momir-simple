@@ -1,6 +1,7 @@
 import { serve } from "bun";
 import index from "./index.html";
 import type { SlimCard } from "./shared/cards/slim-card.model";
+import { printMagicCard } from "./backend/print";
 
 console.log("Loading cards...");
 let file = Bun.file("./src/backend/assets/formatted-cards.json");
@@ -25,7 +26,10 @@ const server = serve({
                 ),
             );
         },
-        "/api/print": (req) => {
+        "/api/print": async (req) => {
+            const body = await req.json();
+
+            await printMagicCard(body);
             return new Response(JSON.stringify({ status: "printed" }));
         },
     },

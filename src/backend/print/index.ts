@@ -87,6 +87,29 @@ export const testPrint = async () => {
     }
 };
 
-export function printMagicCard(card: SlimCard) {
-    console.log(card);
+export async function printMagicCard(card: SlimCard) {
+    const printer = new ThermalPrinter({
+        type: PrinterTypes.EPSON,
+        width: 70,
+        interface: "dummy", // Dummy interface since we're not using execute
+        characterSet: CharacterSet.PC852_LATIN2,
+        removeSpecialCharacters: false,
+        lineCharacter: "=",
+        breakLine: BreakLine.WORD,
+    });
+    printer.alignLeft();
+    printer.print(card.name);
+    printer.alignRight();
+    printer.print(card.mana_cost);
+    printer.cut();
+    
+    const buffer = printer.getBuffer();
+
+    console.log("Printing...");
+    try {
+        const result = await printToUSBPrinter(buffer);
+        console.log(result);
+    } catch (error) {
+        console.error(error.message);
+    }
 }
