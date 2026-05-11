@@ -9,12 +9,15 @@ export function App() {
 
 
         console.log(data);
-        // theoretically there can be an empty card
-        
-        fetch("/api/print", {
-            method: "POST",
-            body: JSON.stringify(data),
-        });
+        if(data?.error) {
+            console.log('don\'t print')
+        } else {
+            fetch("/api/print", {
+                method: "POST",
+                body: JSON.stringify(data),
+            });
+        }
+
     }
     return (
         <div className="app">
