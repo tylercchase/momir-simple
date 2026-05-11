@@ -6,6 +6,7 @@ const {
 } = require("node-thermal-printer");
 import type { SlimCard } from "@/shared/cards/slim-card.model";
 import { getDeviceList } from "usb";
+import sharp from "sharp";
 
 const PRINTER_PRODUCT_ID = 33054;
 
@@ -55,37 +56,6 @@ const printToUSBPrinter = async (data) => {
     }
 };
 
-export const testPrint = async () => {
-    const printer = new ThermalPrinter({
-        type: PrinterTypes.EPSON,
-        width: 70,
-        interface: "dummy", // Dummy interface since we're not using execute
-        characterSet: CharacterSet.PC852_LATIN2,
-        removeSpecialCharacters: false,
-        lineCharacter: "=",
-        breakLine: BreakLine.WORD,
-    });
-
-    printer.alignCenter();
-    printer.println("Test Receipt");
-    printer.drawLine();
-    printer.println("Item 1 x 15 $15.00");
-    printer.println("Item 2 x 1 $75.00");
-    printer.drawLine();
-    printer.println("Total: $90.00");
-    printer.newLine();
-    printer.cut();
-
-    const buffer = printer.getBuffer();
-
-    console.log("Printing...");
-    try {
-        const result = await printToUSBPrinter(buffer);
-        console.log(result);
-    } catch (error) {
-        console.error(error.message);
-    }
-};
 
 export async function printMagicCard(card: SlimCard) {
     const printer = new ThermalPrinter({
@@ -107,7 +77,24 @@ export async function printMagicCard(card: SlimCard) {
 
     printer.alignCenter();
     printer.drawLine();
-
+    // sometimes the art crop might not exist for a card
+    if (card.image_uri) {
+        try {
+            const response = await fetch(card.image_uri);
+            if (!response.ok) throw new Error('Failed to fetch image');
+            const arrayBuffer = await response.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            const processed = await sharp(buffer)
+                .resize(384, null, { withoutEnlargement: true })
+                .grayscale()
+                .png()
+                .toBuffer();
+            printer.printImageBuffer(processed);
+            printer.newLine();
+        } catch (error) {
+            console.error("Failed to load image:", error);
+        }
+    }
     printer.alignCenter();
     printer.drawLine();
 
