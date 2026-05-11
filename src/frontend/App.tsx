@@ -1,26 +1,27 @@
-import { APITester } from "./APITester";
 import "./index.css";
 
-import logo from "./logo.svg";
-import reactLogo from "./react.svg";
-
 export function App() {
+    // also print card?
+    async function getCard(cmc: number) {
+        const res = await fetch(`/api/creature/${cmc}`);
+
+        const data = await res.json();
+        console.log(data);
+        // theoretically there can be an empty card
+    }
     return (
         <div className="app">
-            <div className="logo-container">
-                <img src={logo} alt="Bun Logo" className="logo bun-logo" />
-                <img
-                    src={reactLogo}
-                    alt="React Logo"
-                    className="logo react-logo"
-                />
+            <div className="buttons">
+                {[
+                    ...Array(16)
+                        .keys()
+                        .map((x) => x + 1),
+                ].map((i) => (
+                    <button key={i} onClick={() => getCard(i)}>
+                        {i}
+                    </button>
+                ))}
             </div>
-
-            <h1>Bun + React</h1>
-            <p>
-                Edit <code>src/App.tsx</code> and save to test HMR
-            </p>
-            <APITester />
         </div>
     );
 }

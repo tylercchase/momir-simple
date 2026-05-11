@@ -25,6 +25,16 @@ const server = serve({
                 ),
             );
         },
+        "/api/print": (req) => {
+            return new Response(JSON.stringify({ status: "printed" }));
+        },
+    },
+    error(error) {
+        return new Response(
+            JSON.stringify({
+                error: `${error}`,
+            }),
+        );
     },
 
     development: process.env.NODE_ENV !== "production" && {

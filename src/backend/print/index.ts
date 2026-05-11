@@ -4,6 +4,7 @@ const {
     CharacterSet,
     BreakLine,
 } = require("node-thermal-printer");
+import type { SlimCard } from "@/shared/cards/slim-card.model";
 import { getDeviceList } from "usb";
 
 const PRINTER_PRODUCT_ID = 33054;
@@ -85,3 +86,7 @@ export const testPrint = async () => {
         console.error(error.message);
     }
 };
+
+export function printMagicCard(card: SlimCard) {
+    console.log(card);
+}
