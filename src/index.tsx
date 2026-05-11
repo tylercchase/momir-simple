@@ -1,12 +1,15 @@
-import type { SlimCard } from "../../shared/cards/slim-card.model";
+import { serve } from "bun";
+import index from "./index.html";
+import type { SlimCard } from "./shared/cards/slim-card.model";
 
 console.log("Loading cards...");
-let file = Bun.file("./assets/formatted-cards.json");
+let file = Bun.file("./src/backend/assets/formatted-cards.json");
 const card_contents: Record<number, SlimCard[]> = await file.json();
 console.log("Done loading cards.");
-// TOOD: possibly setup this in the root directory to pull from both backend and frontend
-const server = Bun.serve({
+const server = serve({
     routes: {
+        // Serve index.html for all unmatched routes.
+        "/*": index,
         "/api/creature/:id": (req) => {
             console.log(`Finding a creature with mana cost: ${req.params.id}`);
             return new Response(
@@ -23,6 +26,14 @@ const server = Bun.serve({
             );
         },
     },
+
+    development: process.env.NODE_ENV !== "production" && {
+        // Enable browser hot reloading in development
+        hmr: true,
+
+        // Echo console logs from the browser to the server
+        console: true,
+    },
 });
 
-console.log(`Server running at ${server.url}`);
+console.log(`🚀 Server running at ${server.url}`);
