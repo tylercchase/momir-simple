@@ -1,26 +1,33 @@
+import { useState } from "react";
 import "./index.css";
 
 export function App() {
-    // also print card?
+    let [error, setError] = useState('');
     async function getCard(cmc: number) {
-        const res = await fetch(`/api/creature/${cmc}`);
+        try {
+            const res = await fetch(`/api/creature/${cmc}`).catch(err => setError('Trouble loading card'));
 
-        const data = await res.json();
+            const data = await res?.json();
 
 
-        console.log(data);
-        if(data?.error) {
-            console.log('don\'t print')
-        } else {
-            fetch("/api/print", {
-                method: "POST",
-                body: JSON.stringify(data),
-            });
+            console.log(data);
+            if(data?.error) {
+                console.log('don\'t print');
+                setError(`No creature available for: ${cmc}`)
+            } else if (data) {
+                fetch("/api/print", {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                }).catch(err => setError('Trouble printing card, is the printer connected?'))
+            }
+        } catch(error) {
+            console.error(error);
         }
-
     }
+
     return (
         <div className="app">
+            <div className="error">{error}</div>
             <div className="buttons">
                 {[
                     ...Array(16)

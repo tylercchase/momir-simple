@@ -45,3 +45,7 @@ body {
         color: white;
     }
 }
+.error {
+    color: rgb(212, 123, 123);
+    align-content: center;
+}

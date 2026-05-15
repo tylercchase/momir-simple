@@ -60,17 +60,17 @@ const printToUSBPrinter = async (data) => {
 export async function printMagicCard(card: SlimCard) {
     const printer = new ThermalPrinter({
         type: PrinterTypes.EPSON,
-        width: 70,
+        width: 70-22,
         interface: "dummy", // Dummy interface since we're not using execute
         characterSet: CharacterSet.PC852_LATIN2,
         removeSpecialCharacters: false,
-        lineCharacter: "=",
+        lineCharacter: "-",
         breakLine: BreakLine.WORD,
     });
 
 
 
-    printer.alignCenter();
+    printer.alignLeft();
     printer.println(card.name);
     printer.alignRight();
     printer.println(card.mana_cost);
@@ -80,8 +80,7 @@ export async function printMagicCard(card: SlimCard) {
     // sometimes the art crop might not exist for a card
     if (card.image_uri) {
         try {
-            const response = await fetch(card.image_uri);
-            if (!response.ok) throw new Error('Failed to fetch image');
+            const response = await fetch(card.image_uri).catch(_err => {console.error('couldnt get it')});
             const arrayBuffer = await response.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
             const processed = await sharp(buffer)
@@ -95,11 +94,12 @@ export async function printMagicCard(card: SlimCard) {
             console.error("Failed to load image:", error);
         }
     }
-    printer.alignCenter();
     printer.drawLine();
 
-
+    printer.alignLeft();
     printer.println(card.type_line);
+
+    printer.drawLine();
 
     printer.alignLeft();
     printer.println(card.oracle_text);
