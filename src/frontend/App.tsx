@@ -1,10 +1,15 @@
 import { useState } from "react";
 import "./index.css";
+import {CostButton} from './cost-button';
 
 enum STATUS {
     DONE,
     PENDING,
     ERROR,
+}
+
+interface CardStatus {
+    [cmc: number]: string[]
 }
 
 export function App() {
@@ -56,9 +61,10 @@ export function App() {
     return (
         <div className="app">
             <div className="error">{error}</div>
-            { status === STATUS.PENDING && <div className="loading">
-                <span className="loader"></span>
-            </div>
+            { status === STATUS.PENDING && 
+                <div className="loading">
+                    <span className="loader"></span>
+                </div>
             }
             
             <div className="buttons">
@@ -67,9 +73,9 @@ export function App() {
                         .keys()
                         .map((x) => x + 1),
                 ].map((i) => (
-                    <button key={i} onClick={() => getCard(i)} disabled={status === STATUS.PENDING}>
-                        {i}
-                    </button>
+                    <CostButton
+                    key={i} onClick={() => getCard(i)} disabled={status === STATUS.PENDING} cmc={i}
+                    ></CostButton>
                 ))}
             </div>
         </div>
