@@ -10,6 +10,7 @@ enum STATUS {
 export function App() {
     let [error, setError] = useState('');
     let [status, setStatus] = useState(STATUS.DONE);
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
     function showError(err: string) {
         setError(err);
@@ -32,6 +33,7 @@ export function App() {
                 console.log('don\'t print');
                 showError(`No creature available for: ${cmc}`)
             } else if (data) {
+                // await sleep(2000)
                 fetch("/api/print", {
                     method: "POST",
                     body: JSON.stringify(data),
@@ -54,13 +56,18 @@ export function App() {
     return (
         <div className="app">
             <div className="error">{error}</div>
+            { status === STATUS.PENDING && <div className="loading">
+                <span className="loader"></span>
+            </div>
+            }
+            
             <div className="buttons">
                 {[
                     ...Array(16)
                         .keys()
                         .map((x) => x + 1),
                 ].map((i) => (
-                    <button key={i} onClick={() => getCard(i)}>
+                    <button key={i} onClick={() => getCard(i)} disabled={status === STATUS.PENDING}>
                         {i}
                     </button>
                 ))}
