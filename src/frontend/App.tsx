@@ -13,11 +13,22 @@ export function App() {
             console.log(data);
             if(data?.error) {
                 console.log('don\'t print');
-                setError(`No creature available for: ${cmc}`)
+                setError(`No creature available for: ${cmc}`);
+                setTimeout(() => {
+                    setError('')
+                }, 2000);
             } else if (data) {
                 fetch("/api/print", {
                     method: "POST",
                     body: JSON.stringify(data),
+                }).then(res => res.json()).then(res => {
+                    console.log(res);
+                    if(res?.error) {
+                        setError(res.error);
+                        setTimeout(() => {
+                            setError('');
+                        }, 2000)
+                    }
                 }).catch(err => setError('Trouble printing card, is the printer connected?'))
             }
         } catch(error) {

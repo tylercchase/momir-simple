@@ -48,4 +48,5 @@ body {
 .error {
     color: rgb(212, 123, 123);
     align-content: center;
+    min-height: 1.5rem;
 }

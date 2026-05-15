@@ -29,8 +29,8 @@ const server = serve({
         "/api/print": async (req) => {
             const body = await req.json();
 
-            await printMagicCard(body);
-            return new Response(JSON.stringify({ status: "printed" }));
+            const resp = await printMagicCard(body);
+            return new Response(JSON.stringify({ status: resp }));
         },
     },
     error(error) {
@@ -38,6 +38,7 @@ const server = serve({
             JSON.stringify({
                 error: `${error}`,
             }),
+            {status: 500}
         );
     },
 

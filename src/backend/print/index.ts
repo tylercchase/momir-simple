@@ -77,7 +77,6 @@ export async function printMagicCard(card: SlimCard) {
 
     printer.alignCenter();
     printer.drawLine();
-    // sometimes the art crop might not exist for a card
     if (card.image_uri) {
         try {
             const response = await fetch(card.image_uri).catch(_err => {console.error('couldnt get it')});
@@ -91,6 +90,7 @@ export async function printMagicCard(card: SlimCard) {
             printer.printImageBuffer(processed);
             printer.newLine();
         } catch (error) {
+            // images shouldn't stop the print
             console.error("Failed to load image:", error);
         }
     }
@@ -111,12 +111,11 @@ export async function printMagicCard(card: SlimCard) {
     printer.cut();
     
     const buffer = printer.getBuffer();
-
     console.log("Printing...");
     try {
         const result = await printToUSBPrinter(buffer);
-        console.log(result);
+        return result;
     } catch (error) {
-        console.error(error.message);
+        throw error;
     }
 }
