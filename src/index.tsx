@@ -47,7 +47,7 @@ const server = serve({
         hmr: true,
 
         // Echo console logs from the browser to the server
-        console: true,
+        console: false,
     },
 });
 

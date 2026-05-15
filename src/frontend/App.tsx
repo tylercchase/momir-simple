@@ -1,10 +1,27 @@
 import { useState } from "react";
 import "./index.css";
 
+enum STATUS {
+    DONE,
+    PENDING,
+    ERROR,
+}
+
 export function App() {
     let [error, setError] = useState('');
+    let [status, setStatus] = useState(STATUS.DONE);
+
+    function showError(err: string) {
+        setError(err);
+        setStatus(STATUS.ERROR);
+        setTimeout(() => {
+            setError('');
+        }, 2000)
+    }
+
     async function getCard(cmc: number) {
         try {
+            setStatus(STATUS.PENDING);
             const res = await fetch(`/api/creature/${cmc}`).catch(err => setError('Trouble loading card'));
 
             const data = await res?.json();
@@ -13,10 +30,7 @@ export function App() {
             console.log(data);
             if(data?.error) {
                 console.log('don\'t print');
-                setError(`No creature available for: ${cmc}`);
-                setTimeout(() => {
-                    setError('')
-                }, 2000);
+                showError(`No creature available for: ${cmc}`)
             } else if (data) {
                 fetch("/api/print", {
                     method: "POST",
@@ -24,12 +38,13 @@ export function App() {
                 }).then(res => res.json()).then(res => {
                     console.log(res);
                     if(res?.error) {
-                        setError(res.error);
-                        setTimeout(() => {
-                            setError('');
-                        }, 2000)
+                        showError(res.error);
+                    } else {
+                        setStatus(STATUS.DONE)
                     }
-                }).catch(err => setError('Trouble printing card, is the printer connected?'))
+                }).catch(_err => {
+                    showError('Trouble printing card, is the printer connected?');
+                })
             }
         } catch(error) {
             console.error(error);
