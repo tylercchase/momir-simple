@@ -4,7 +4,7 @@ import type { SlimCard } from "./shared/cards/slim-card.model";
 import { printMagicCard } from "./backend/print";
 
 console.log("Loading cards...");
-let file = Bun.file("./src/backend/assets/formatted-cards.json");
+let file = Bun.file("./src/backend/assets/hellscube-formatted-cards.json");
 const card_contents: Record<number, SlimCard[]> = await file.json();
 console.log("Done loading cards.");
 const server = serve({
